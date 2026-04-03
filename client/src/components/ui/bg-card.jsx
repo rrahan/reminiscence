@@ -6,6 +6,7 @@ import claudeIcon from "@/assets/claude.png";
 import geminiIcon from "@/assets/gemini.png";
 import grokIcon from "@/assets/grok.png";
 import perplexityIcon from "@/assets/perplexity.png";
+import copyIcon from "@/assets/copy.svg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -27,6 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { toast } from "sonner"
 
 
 function validateEmail(value) {
@@ -182,7 +184,7 @@ export default function BgCard({
             <p className="text-black text-[11px] mb-6">By clicking Submit, you agree to our [Terms] and [Privacy Policy].</p>
             <hr className="border-t border-gray-600 -mx-6" />
           </div>
-          <p className="-my-1 mx-1 pl-48">Works with</p>
+          <p className="-my-1 mx-1 pl-36">Works with any model itw.</p>
           <div className="flex flex-row-auto gap-12">
             <Button disabled variant="outline" title="ChatGPT" className="size-12 cursor-pointer" size="icon">
               <img src={openaiIcon} alt="ChatGPT" className="size-10" />
@@ -198,6 +200,9 @@ export default function BgCard({
             </Button>
             <Button variant="outline" title="Perplexity" className="size-12 cursor-pointer" size="icon">
               <img src={perplexityIcon} alt="Perplexity" className="size-8" />
+            </Button>
+            <Button variant="outline" title="Copy and paste to any other LLM's" className="size-12 cursor-pointer" size="icon" onClick={() => toast("Copied, Paste it in any other LLM's", { position: "top-center" })}>
+              <img src={copyIcon} alt="Copy" className="size-8" />
             </Button>
           </div>
         </form>
