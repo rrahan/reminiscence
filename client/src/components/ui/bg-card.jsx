@@ -202,7 +202,7 @@ export default function BgCard({
               <img src={perplexityIcon} alt="Perplexity" className="size-8" />
             </Button>
             <Button variant="outline" title="Copy and paste to any other LLM's" className="size-12 cursor-pointer" size="icon" onClick={() => toast("Copied, Paste it in any other LLM's", { position: "top-center" })}>
-              <img src={copyIcon} alt="Copy" className="size-8" />
+              <img src={copyIcon} alt="Copy" className="size-7" />
             </Button>
           </div>
         </form>
