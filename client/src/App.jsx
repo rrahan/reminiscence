@@ -19,7 +19,7 @@ function App() {
             {/* old title, revert if needed */}
             {/* <div className="text-[#ffffff] text-8xl font-surgena whitespace-nowrap">Reminiscence*</div> */}
             <PixelHeading mode="random" staggerDelay={50} cycleInterval={800} autoPlay className="text-[#ffffff] text-8xl font-surgena whitespace-nowrap">
-              Reminiscence
+              reminiscence
             </PixelHeading>
             <p className="text-[#ffffff] text-md font-jetbrains text-justify">A state-serialization protocol for portable context. Extract raw session memory from proprietary silos, normalize its structure, and inject it into any model to maintain narrative continuity without manual reconstruction.</p>
           </div>

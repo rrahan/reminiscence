@@ -18,7 +18,16 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Mail } from "lucide-react";
+import { Mail, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 function validateEmail(value) {
   if (!value.trim()) {
@@ -69,6 +78,29 @@ function EmailField({ id, value, onChange, error }) {
   );
 }
 
+function DeleteDialog({ open, setOpen }) {
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="rounded-none font-jetbrains">
+        <DialogHeader>
+          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently remove your data from our servers.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-row gap-4 justify-end mt-4">
+          <Button className="rounded-none cursor-pointer bg-black hover:bg-[#413d3d] text-white" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
+          <Button className="rounded-none bg-[#961223] hover:bg-[#7a0f1d] cursor-pointer" onClick={() => setOpen(false)}>
+            Delete
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export default function BgCard({
   onSubmit,
   className,
@@ -79,6 +111,7 @@ export default function BgCard({
   const [email, setEmail] = useState(defaultEmail);
   const [localErrors, setLocalErrors] = useState({});
   const [spinning, setSpinning] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -134,6 +167,16 @@ export default function BgCard({
                 Submit
               </>
             </Button>
+            <Button
+              className="h-9 w-9 cursor-pointer bg-[#961223] touch-manipulation rounded-none shrink-0"
+              onClick={() => setOpen(true)}
+              size="icon"
+              type="button">
+              <>
+                <Trash2 />
+              </>
+            </Button>
+            <DeleteDialog open={open} setOpen={setOpen} />
           </div>
           <div className="-mt-4">
             <p className="text-black text-[11px] mb-6">By clicking Submit, you agree to our [Terms] and [Privacy Policy].</p>
