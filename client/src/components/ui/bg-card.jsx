@@ -28,7 +28,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "sonner"
-
+import axios from "axios";
 
 function validateURL(value) {
   if (!value.trim()) {
@@ -50,6 +50,36 @@ function ErrorAlert({ message }) {
       {message}
     </div>
   );
+}
+
+const handleDelete = async (setOpen) => {
+  const value = localStorage.getItem("r-chatUrls");
+
+  if (!value) {
+    return toast('No chat history present in the system', { position: "top-center" });
+  }
+
+  let ids = [];
+  try {
+    ids = JSON.parse(value);
+  } catch (err) {
+    console.error(err);
+  }
+
+  if (ids.length === 0) {
+    return toast('No chat history present in the system', { position: "top-center" });
+  }
+
+  try {
+    await axios.delete('http://localhost:5000/api/purge', { data: { ids } });
+
+    localStorage.removeItem("r-chatUrls");
+    toast("Success! All chats purged.", { position: "top-center" });
+    setOpen(false)
+  } catch (error) {
+    console.error(error);
+    toast("Failed to purge", { position: "top-center" });
+  }
 }
 
 function URLField({ id, value, onChange }) {
@@ -78,14 +108,14 @@ function DeleteDialog({ open, setOpen }) {
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
-            This will instantly purge all your transferred chats from the server. Any active links will break immediately. This cannot be undone.
+            This will instantly purge all your transferred chats from the server. This cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-row gap-4 justify-end mt-4">
           <Button className="rounded-none cursor-pointer bg-black hover:bg-[#413d3d] text-white" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button className="rounded-none bg-[#961223] hover:bg-[#7a0f1d] cursor-pointer" onClick={() => setOpen(false)}>
+          <Button className="rounded-none bg-[#961223] hover:bg-[#7a0f1d] cursor-pointer" onClick={() => handleDelete(setOpen)}>
             Delete All
           </Button>
         </div>
@@ -128,7 +158,7 @@ export default function BgCard({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [tosOpen, setTosOpen] = useState(false);
 
-  const handleSubmit = useCallback((e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
     const urlError = validateURL(url);
@@ -139,7 +169,36 @@ export default function BgCard({
     }
 
     setSpinning(true);
-    onSubmit?.(url.trim());
+    let formData = { url: url.trim() };
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/serialize', formData);
+      toast("Success", { position: "top-center" });
+      onSubmit?.(url.trim());
+
+
+      const newId = response.data?.id;
+      if (newId) {
+        let existingIds = [];
+        try {
+          const stored = localStorage.getItem('r-chatUrls');
+          existingIds = stored ? JSON.parse(stored) : [];
+          if (!Array.isArray(existingIds)) existingIds = [existingIds];
+        } catch (e) {
+          existingIds = [];
+        }
+
+        if (!existingIds.includes(newId)) {
+          existingIds.push(newId);
+          localStorage.setItem('r-chatUrls', JSON.stringify(existingIds));
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast("Failed", { position: "top-center" });
+    } finally {
+      setSpinning(false);
+    }
   }, [url, onSubmit]);
 
   const handleUrlChange = useCallback((e) => {
@@ -176,7 +235,7 @@ export default function BgCard({
             </Button>
             <Button
               className="h-9 w-9 cursor-pointer bg-[#961223] touch-manipulation rounded-none shrink-0"
-
+              // disabled={!url.trim()}
               onClick={() => setDeleteOpen(true)}
               size="icon"
               type="button">

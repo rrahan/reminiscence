@@ -2,8 +2,9 @@ const express = require("express");
 
 const router = express.Router();
 
-// Mount feature routes
+//  routes
 router.use("/serialize", require("./serialize.route"));
+router.use("/purge", require("./purge.route"));
 
 // Default API route
 router.get("/", (_req, res) => {

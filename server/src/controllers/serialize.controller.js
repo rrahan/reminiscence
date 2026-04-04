@@ -12,7 +12,7 @@ const serialize = async (req, res, next) => {
 
     const response = await uploadMD(markdownString)
 
-    res.status(200).json({ success: true, data: response.url });
+    res.status(200).json({ success: true, url: response.url, id: response.file_id });
   } catch (error) {
     next(error);
   }
