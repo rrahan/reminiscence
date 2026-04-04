@@ -5,7 +5,9 @@ import openaiIcon from "@/assets/openai.png";
 import claudeIcon from "@/assets/claude.png";
 import geminiIcon from "@/assets/gemini.png";
 import grokIcon from "@/assets/grok.png";
+import v0Icon from "@/assets/v0.png";
 import perplexityIcon from "@/assets/perplexity.png";
+import sciraIcon from "@/assets/scira.png";
 import copyIcon from "@/assets/copy.svg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,7 +20,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Mail, Trash2 } from "lucide-react";
+import { Mail, RefreshCcw, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -87,13 +89,13 @@ function URLField({ id, value, onChange }) {
     <Field className='font-jetbrains'>
       <FieldContent>
         <InputGroup className="rounded-none">
-          <InputGroupAddon>
+          {/* <InputGroupAddon>
             <Mail aria-hidden="true" className="size-4" />
-          </InputGroupAddon>
+          </InputGroupAddon> */}
           <InputGroupInput
             id={id}
             onChange={onChange}
-            placeholder="Paste something"
+            placeholder="Paste your chat url"
             value={value} />
         </InputGroup>
       </FieldContent>
@@ -157,6 +159,7 @@ export default function BgCard({
   const [spinning, setSpinning] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [tosOpen, setTosOpen] = useState(false);
+  const [id, setId] = useState('');
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
@@ -176,8 +179,9 @@ export default function BgCard({
       toast("Success", { position: "top-center" });
       onSubmit?.(url.trim());
 
-
       const newId = response.data?.id;
+      setId(newId)
+      localStorage.setItem('r-currentSession', JSON.stringify(newId));
       if (newId) {
         let existingIds = [];
         try {
@@ -225,7 +229,7 @@ export default function BgCard({
 
             <Button
               aria-busy={isLoading}
-              className="h-9 w-44 cursor-pointer touch-manipulation rounded-none shrink-0"
+              className="h-9 w-36 cursor-pointer touch-manipulation rounded-none shrink-0"
               data-loading={isLoading}
               disabled={isLoading}
               type="submit">
@@ -243,31 +247,85 @@ export default function BgCard({
                 <Trash2 />
               </>
             </Button>
+            <Button
+              className="h-9 w-9 cursor-pointer bg-[#322f2f] touch-manipulation rounded-none shrink-0"
+              size="icon"
+              type="button"
+              onClick={() => {
+                localStorage.setItem('r-currentSession', JSON.stringify(''));
+                setId('');
+                setUrl('');
+              }}>
+              <>
+                <RefreshCcw />
+              </>
+            </Button>
             <DeleteDialog open={deleteOpen} setOpen={setDeleteOpen} />
           </div>
           <div className="-mt-4">
             <p className="text-black text-[11px] mb-6">By clicking Submit, you agree to our <a className="underline cursor-pointer" onClick={() => setTosOpen(true)}>Privacy & Terms</a>
-              <TOSDialog open={tosOpen} setOpen={setTosOpen} />.</p>
+              <TOSDialog open={tosOpen} setOpen={setTosOpen} />.{id && <>&nbsp;&nbsp; Current session: {id}</>}</p>
             <hr className="border-t border-gray-600 -mx-6" />
           </div>
-          <p className="-my-1 mx-1 pl-36">Works with any model itw.</p>
-          <div className="flex flex-row-auto gap-12">
-            <Button disabled variant="outline" title="ChatGPT" className="size-12 cursor-pointer" size="icon">
-              <img src={openaiIcon} alt="ChatGPT" className="size-10" />
-            </Button>
-            <Button variant="outline" title="Claude" className="size-12 cursor-pointer" size="icon">
-              <img src={claudeIcon} alt="Claude" className="size-10" />
-            </Button>
-            <Button variant="outline" title="Gemini" className="size-12 cursor-pointer" size="icon">
-              <img src={geminiIcon} alt="Gemini" className="size-8" />
-            </Button>
-            <Button variant="outline" title="Grok" className="size-12 cursor-pointer" size="icon">
-              <img src={grokIcon} alt="Grok" className="size-8" />
-            </Button>
-            <Button variant="outline" title="Perplexity" className="size-12 cursor-pointer" size="icon">
-              <img src={perplexityIcon} alt="Perplexity" className="size-8" />
-            </Button>
-            <Button variant="outline" title="Copy and paste to any other LLM's" className="size-12 cursor-pointer" size="icon" onClick={() => toast("Copied, Paste it in any other LLM's", { position: "top-center" })}>
+          <p className="-my-1 mx-1 pl-36">Works with any LLM's itw.</p>
+          <div className="flex flex-row-auto gap-8">
+            <a className={!id ? "pointer-events-none" : ""} href={`https://chatgpt.com/?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
+              <Button
+                disabled={!id}
+                variant="outline"
+                title="ChatGPT"
+                className="size-12 cursor-pointer"
+                size="icon"
+                type="button"
+              >
+                <img src={openaiIcon} alt="ChatGPT" className="size-10" />
+              </Button>
+            </a>
+            <a className={!id ? "pointer-events-none" : ""} href={`https://claude.ai/new?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%20%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
+              <Button disabled={!id} type="button" variant="outline" title="Claude" className="size-12 cursor-pointer" size="icon">
+                <img src={claudeIcon} alt="Claude" className="size-10" />
+              </Button>
+            </a>
+            {/* <a className={!id ? "pointer-events-none" : ""} href={`https://gemini.google.com/app?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%20%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
+              <Button disabled={!id} type="button" variant="outline" title="Gemini" className="size-12 cursor-pointer" size="icon">
+                <img src={geminiIcon} alt="Gemini" className="size-8" />
+              </Button>
+            </a> */}
+
+            <a className={!id ? "pointer-events-none" : ""} href={`https://grok.com/?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%20%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
+              <Button disabled={!id} type="button" variant="outline" title="Grok" className="size-12 cursor-pointer" size="icon">
+                <img src={grokIcon} alt="Grok" className="size-8" />
+              </Button>
+            </a>
+
+            <a className={!id ? "pointer-events-none" : ""} href={`https://scira.ai/?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%20%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
+              <Button disabled={!id} type="button" variant="outline" title="Scira" className="size-12 cursor-pointer" size="icon">
+                <img src={sciraIcon} alt="Scira" className="size-8" />
+              </Button>
+            </a>
+            <a className={!id ? "pointer-events-none" : ""} href={`https://v0.dev/?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%20%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
+              <Button disabled={!id} type="button" variant="outline" title="v0" className="size-12 cursor-pointer" size="icon">
+                <img src={v0Icon} alt="v0" className="size-8" />
+              </Button>
+            </a>
+            <a className={!id ? "pointer-events-none" : ""} href={`https://www.perplexity.ai/?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%20%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
+              <Button disabled={!id} type="button" variant="outline" title="Perplexity" className="size-12 cursor-pointer" size="icon">
+                <img src={perplexityIcon} alt="Perplexity" className="size-8" />
+              </Button>
+            </a>
+            <Button
+              disabled={!id}
+              type="button"
+              variant="outline"
+              title="Copy and paste to any other LLM's"
+              className="size-12 cursor-pointer"
+              size="icon"
+              onClick={() => {
+                const prompt = `Hi! Can you please read my past chat context [here](https://lmfiles.com/f/${id}) and resume this conversation?`;
+                navigator.clipboard.writeText(prompt);
+                toast("Copied, Paste it in any other LLM's", { position: "top-center" });
+              }}
+            >
               <img src={copyIcon} alt="Copy" className="size-7" />
             </Button>
           </div>
