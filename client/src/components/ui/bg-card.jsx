@@ -103,6 +103,28 @@ function DeleteDialog({ open, setOpen }) {
   )
 }
 
+function TOSDialog({ open, setOpen }) {
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="rounded-none font-jetbrains">
+        <DialogHeader>
+          <DialogTitle>Privacy & Terms</DialogTitle>
+          <DialogDescription>
+            We protect your privacy by design. To make the transfer work, we temporarily process your chat to make the transfer work, then permanently delete it within an hour. We never track you, sell data, or train AI. Our code is fully <a className="underline text-black" href="https://git.new/reminiscence">open-source</a>, and <span className="text-black">we highly encourage self-hosting for total control.</span>
+            <br /> <br />
+            Because this public instance is a free tool, it is provided "as is" without guarantees. Please do not transfer illegal or sensitive personal data.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-row gap-4 justify-end mt-4">
+          <Button className="rounded-none bg-[#961223] hover:bg-[#7a0f1d] cursor-pointer" onClick={() => setOpen(false)}>
+            I Understand
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export default function BgCard({
   onSubmit,
   className,
@@ -113,7 +135,8 @@ export default function BgCard({
   const [email, setEmail] = useState(defaultEmail);
   const [localErrors, setLocalErrors] = useState({});
   const [spinning, setSpinning] = useState(false);
-  const [open, setOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [tosOpen, setTosOpen] = useState(false);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -171,17 +194,18 @@ export default function BgCard({
             </Button>
             <Button
               className="h-9 w-9 cursor-pointer bg-[#961223] touch-manipulation rounded-none shrink-0"
-              onClick={() => setOpen(true)}
+              onClick={() => setDeleteOpen(true)}
               size="icon"
               type="button">
               <>
                 <Trash2 />
               </>
             </Button>
-            <DeleteDialog open={open} setOpen={setOpen} />
+            <DeleteDialog open={deleteOpen} setOpen={setDeleteOpen} />
           </div>
           <div className="-mt-4">
-            <p className="text-black text-[11px] mb-6">By clicking Submit, you agree to our [Terms] and [Privacy Policy].</p>
+            <p className="text-black text-[11px] mb-6">By clicking Submit, you agree to our <a className="underline cursor-pointer" onClick={() => setTosOpen(true)}>[Privacy & Terms]</a>
+              <TOSDialog open={tosOpen} setOpen={setTosOpen} />.</p>
             <hr className="border-t border-gray-600 -mx-6" />
           </div>
           <p className="-my-1 mx-1 pl-36">Works with any model itw.</p>
