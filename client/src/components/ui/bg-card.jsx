@@ -12,7 +12,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldContent,
-  FieldError,
 } from "@/components/ui/field";
 import {
   InputGroup,
@@ -31,13 +30,13 @@ import {
 import { toast } from "sonner"
 
 
-function validateEmail(value) {
+function validateURL(value) {
   if (!value.trim()) {
-    return "Email is required";
+    return "URL is required";
   }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(value)) {
-    return "Please enter a valid email address";
+  const urlRegex = /^(https?:\/\/)?(www\.)?(chatgpt\.com|claude\.ai|grok\.com)\//i;
+  if (!urlRegex.test(value)) {
+    return "Please enter a valid chat URL";
   }
   return;
 }
@@ -53,28 +52,21 @@ function ErrorAlert({ message }) {
   );
 }
 
-function EmailField({ id, value, onChange, error }) {
+function URLField({ id, value, onChange }) {
   return (
-    <Field data-invalid={!!error} className='font-jetbrains'>
+    <Field className='font-jetbrains'>
       <FieldContent>
-        <InputGroup aria-invalid={!!error} className="rounded-none">
+        <InputGroup className="rounded-none">
           <InputGroupAddon>
             <Mail aria-hidden="true" className="size-4" />
           </InputGroupAddon>
           <InputGroupInput
-            aria-describedby={error ? `${id}-error` : undefined}
-            aria-invalid={!!error}
-            autoComplete="email"
             id={id}
-            inputMode="email"
-            name="email"
             onChange={onChange}
             placeholder="Paste something"
             required
-            type="email"
             value={value} />
         </InputGroup>
-        {error && <FieldError id={`${id}-error`}>{error}</FieldError>}
       </FieldContent>
     </Field>
   );
@@ -110,7 +102,7 @@ function TOSDialog({ open, setOpen }) {
         <DialogHeader>
           <DialogTitle>Privacy & Terms</DialogTitle>
           <DialogDescription>
-            We protect your privacy by design. To make the transfer work, we temporarily process your chat to make the transfer work, then permanently delete it within an hour. We never track you, sell data, or train AI. Our code is fully <a className="underline text-black" href="https://git.new/reminiscence">open-source</a>, and <span className="text-black">we highly encourage self-hosting for total control.</span>
+            Your privacy is built-in. We temporarily host your chat on secure third-party servers to make the transfer work, then permanently delete it within an hour. We never track you, sell data, or train AI. Our code is fully <a className="underline text-black" href="https://git.new/reminiscence">open-source</a>, and <span className="text-black">we highly encourage self-hosting for total control.</span>
             <br /> <br />
             Because this public instance is a free tool, it is provided "as is" without guarantees. Please do not transfer illegal or sensitive personal data.
           </DialogDescription>
@@ -128,12 +120,11 @@ function TOSDialog({ open, setOpen }) {
 export default function BgCard({
   onSubmit,
   className,
-  defaultEmail = "",
+  defaultUrl = "",
   isLoading = false,
   errors,
 }) {
-  const [email, setEmail] = useState(defaultEmail);
-  const [localErrors, setLocalErrors] = useState({});
+  const [url, setUrl] = useState(defaultUrl);
   const [spinning, setSpinning] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [tosOpen, setTosOpen] = useState(false);
@@ -141,27 +132,21 @@ export default function BgCard({
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
 
-    const emailError = validateEmail(email);
+    const urlError = validateURL(url);
 
-    if (emailError) {
-      setLocalErrors({ email: emailError });
+    if (urlError) {
+      toast(urlError, { position: "top-center" });
       return;
     }
 
-    setLocalErrors({});
     setSpinning(true);
-    onSubmit?.(email.trim());
-  }, [email, onSubmit]);
+    onSubmit?.(url.trim());
+  }, [url, onSubmit]);
 
-  const handleEmailChange = useCallback((e) => {
-    const value = e.target.value;
-    setEmail(value);
-    if (localErrors.email) {
-      setLocalErrors((prev) => ({ ...prev, email: validateEmail(value) }));
-    }
-  }, [localErrors.email]);
+  const handleUrlChange = useCallback((e) => {
+    setUrl(e.target.value);
+  }, []);
 
-  const emailError = errors?.email || localErrors.email;
   const generalError = errors?.general;
 
   return (
@@ -176,11 +161,9 @@ export default function BgCard({
           </div>
 
           <div className="flex items-end gap-3">
-            <EmailField
-              error={emailError}
-              id="magic-link-email"
-              onChange={handleEmailChange}
-              value={email} />
+            <URLField
+              onChange={handleUrlChange}
+              value={url} />
 
             <Button
               aria-busy={isLoading}
@@ -204,7 +187,7 @@ export default function BgCard({
             <DeleteDialog open={deleteOpen} setOpen={setDeleteOpen} />
           </div>
           <div className="-mt-4">
-            <p className="text-black text-[11px] mb-6">By clicking Submit, you agree to our <a className="underline cursor-pointer" onClick={() => setTosOpen(true)}>[Privacy & Terms]</a>
+            <p className="text-black text-[11px] mb-6">By clicking Submit, you agree to our <a className="underline cursor-pointer" onClick={() => setTosOpen(true)}>Privacy & Terms</a>
               <TOSDialog open={tosOpen} setOpen={setTosOpen} />.</p>
             <hr className="border-t border-gray-600 -mx-6" />
           </div>
