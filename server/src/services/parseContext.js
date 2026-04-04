@@ -1,27 +1,29 @@
 const axios = require('axios');
 
 
-const performParsing = async (data) => {
+const performParsing = async (data, res) => {
 
-  let urlString = data.url
+  let urlString = 'https://perplexity.ai/search/hi-Gzzl3iSnT967zVrMg7BaMA';
   let url = new URL(urlString);
 
-
-  if (url.hostname === 'chatgpt.com') {
+  if (url.hostname.includes('chatgpt.com')) {
     invokeChatGPT(url);
-  } else if (url.hostname === 'claude.ai') {
+  } else if (url.hostname.includes('claude.ai')) {
     invokeClaude(url);
-  } else if (url.hostname === 'gemini.google.com') {
+  } else if (url.hostname.includes('gemini.google.com')) {
     invokeGemini(url);
-  } else if (url.hostname === 'perplexity.com') {
+  } else if (url.hostname.includes('perplexity.ai') || url.hostname.includes('perplexity.com')) {
     invokePerplexity(url);
-  } else if (url.hostname === 'grok.com') {
+  } else if (url.hostname.includes('grok.com')) {
     invokeGrok(url);
   } else {
-    res.status(400).json({
-      success: false,
-      message: "Invalid URL",
-    });
+    console.error("Invalid URL:", urlString);
+    if (typeof res !== 'undefined' && res) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid URL",
+      });
+    }
   }
 };
 
@@ -175,31 +177,80 @@ const invokeClaude = async (url) => {
   }
 }
 
+//gemini not supported yet
 const invokeGemini = async (url) => {
   console.log('gemini')
 }
 
 const invokePerplexity = async (url) => {
-  console.log('perplexity')
+  try {
+    const pathParts = url.pathname.split('/').filter(Boolean);
+    const uuid = pathParts[pathParts.length - 1];
+
+    if (!uuid) throw new Error("Invalid Perplexity URL");
+
+    const apiUrl = `https://www.perplexity.ai/rest/thread/${uuid}?with_schematized_response=true`;
+
+    const response = await axios.get(apiUrl);
+    const data = response.data;
+
+    const messages = [];
+    if (data && Array.isArray(data.entries)) {
+      for (const entry of data.entries) {
+        if (entry.query_str) {
+          messages.push({
+            role: "User",
+            content: entry.query_str
+          });
+        }
+
+        if (Array.isArray(entry.blocks)) {
+          const answerBlock = entry.blocks.find(b =>
+            (b.intended_usage === 'ask_text' || b.intended_usage === 'ask_text_0_markdown') &&
+            b.markdown_block &&
+            b.markdown_block.answer
+          );
+
+          if (answerBlock) {
+            messages.push({
+              role: "Assistant",
+              content: answerBlock.markdown_block.answer
+            });
+          }
+        }
+      }
+    }
+
+    console.log(JSON.stringify(messages, null, 2));
+
+    if (typeof res !== 'undefined') {
+      res.json(messages);
+    } else {
+      return messages;
+    }
+
+  } catch (error) {
+    console.error('Error fetching/parsing Perplexity data:', error.message);
+    if (typeof res !== 'undefined') {
+      res.status(500).send('Error fetching data');
+    }
+  }
 }
+
+
 
 const invokeGrok = async (url) => {
   try {
-    // 1. Transform the URL
-    // From: https://grok.com/share/uuid
-    // To: https://grok.com/rest/app-chat/share_links/uuid
     const pathParts = url.pathname.split('/').filter(Boolean);
-    const uuid = pathParts[pathParts.length - 1]; // get the last part
+    const uuid = pathParts[pathParts.length - 1];
 
     if (!uuid) throw new Error("Invalid Grok share URL");
 
     const apiUrl = `https://grok.com/rest/app-chat/share_links/${uuid}`;
 
-    // 2. Fetch the data
     const response = await axios.get(apiUrl);
     const data = response.data;
 
-    // 3. Parse the messages
     const messages = [];
     if (data && Array.isArray(data.responses)) {
       for (const msg of data.responses) {
@@ -239,6 +290,6 @@ module.exports = {
   performParsing,
 };
 
-// Test it out
+// Test
 performParsing({ title: "My Test Data" });
 
