@@ -64,7 +64,6 @@ function URLField({ id, value, onChange }) {
             id={id}
             onChange={onChange}
             placeholder="Paste something"
-            required
             value={value} />
         </InputGroup>
       </FieldContent>
@@ -79,7 +78,7 @@ function DeleteDialog({ open, setOpen }) {
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently remove your data from our servers.
+            This will instantly purge all your transferred chats from the server. Any active links will break immediately. This cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-row gap-4 justify-end mt-4">
@@ -87,7 +86,7 @@ function DeleteDialog({ open, setOpen }) {
             Cancel
           </Button>
           <Button className="rounded-none bg-[#961223] hover:bg-[#7a0f1d] cursor-pointer" onClick={() => setOpen(false)}>
-            Delete
+            Delete All
           </Button>
         </div>
       </DialogContent>
@@ -177,6 +176,7 @@ export default function BgCard({
             </Button>
             <Button
               className="h-9 w-9 cursor-pointer bg-[#961223] touch-manipulation rounded-none shrink-0"
+
               onClick={() => setDeleteOpen(true)}
               size="icon"
               type="button">
