@@ -1,21 +1,22 @@
 const axios = require('axios');
+const cloudscraper = require('cloudscraper');
 
 
 const performParsing = async (data, res) => {
 
-  let urlString = 'https://perplexity.ai/search/hi-Gzzl3iSnT967zVrMg7BaMA';
+  let urlString = data.url;
   let url = new URL(urlString);
 
   if (url.hostname.includes('chatgpt.com')) {
-    invokeChatGPT(url);
+    return await invokeChatGPT(url);
   } else if (url.hostname.includes('claude.ai')) {
-    invokeClaude(url);
+    return await invokeClaude(url);
   } else if (url.hostname.includes('gemini.google.com')) {
-    invokeGemini(url);
+    return await invokeGemini(url);
   } else if (url.hostname.includes('perplexity.ai') || url.hostname.includes('perplexity.com')) {
-    invokePerplexity(url);
+    return await invokePerplexity(url);
   } else if (url.hostname.includes('grok.com')) {
-    invokeGrok(url);
+    return await invokeGrok(url);
   } else {
     console.error("Invalid URL:", urlString);
     if (typeof res !== 'undefined' && res) {
@@ -135,8 +136,8 @@ const invokeClaude = async (url) => {
 
     const apiUrl = `https://claude.ai/api/chat_snapshots/${uuid}?rendering_mode=messages&render_all_tools=true`;
 
-    const response = await axios.get(apiUrl);
-    const data = response.data;
+    const responseRaw = await cloudscraper.get(apiUrl);
+    const data = JSON.parse(responseRaw);
 
     const messages = [];
     if (data && Array.isArray(data.chat_messages)) {
@@ -182,60 +183,62 @@ const invokeGemini = async (url) => {
   console.log('gemini')
 }
 
-const invokePerplexity = async (url) => {
-  try {
-    const pathParts = url.pathname.split('/').filter(Boolean);
-    const uuid = pathParts[pathParts.length - 1];
+//pplxty hitting cf - cant be bypassed
 
-    if (!uuid) throw new Error("Invalid Perplexity URL");
+// const invokePerplexity = async (url) => {
+//   try {
+//     const pathParts = url.pathname.split('/').filter(Boolean);
+//     const uuid = pathParts[pathParts.length - 1];
 
-    const apiUrl = `https://www.perplexity.ai/rest/thread/${uuid}?with_schematized_response=true`;
+//     if (!uuid) throw new Error("Invalid Perplexity URL");
 
-    const response = await axios.get(apiUrl);
-    const data = response.data;
+//     const apiUrl = `https://www.perplexity.ai/rest/thread/${uuid}?with_schematized_response=true`;
 
-    const messages = [];
-    if (data && Array.isArray(data.entries)) {
-      for (const entry of data.entries) {
-        if (entry.query_str) {
-          messages.push({
-            role: "User",
-            content: entry.query_str
-          });
-        }
+//     const responseRaw = await cloudscraper.get(apiUrl);
+//     const data = JSON.parse(responseRaw);
 
-        if (Array.isArray(entry.blocks)) {
-          const answerBlock = entry.blocks.find(b =>
-            (b.intended_usage === 'ask_text' || b.intended_usage === 'ask_text_0_markdown') &&
-            b.markdown_block &&
-            b.markdown_block.answer
-          );
+//     const messages = [];
+//     if (data && Array.isArray(data.entries)) {
+//       for (const entry of data.entries) {
+//         if (entry.query_str) {
+//           messages.push({
+//             role: "User",
+//             content: entry.query_str
+//           });
+//         }
 
-          if (answerBlock) {
-            messages.push({
-              role: "Assistant",
-              content: answerBlock.markdown_block.answer
-            });
-          }
-        }
-      }
-    }
+//         if (Array.isArray(entry.blocks)) {
+//           const answerBlock = entry.blocks.find(b =>
+//             (b.intended_usage === 'ask_text' || b.intended_usage === 'ask_text_0_markdown') &&
+//             b.markdown_block &&
+//             b.markdown_block.answer
+//           );
 
-    console.log(JSON.stringify(messages, null, 2));
+//           if (answerBlock) {
+//             messages.push({
+//               role: "Assistant",
+//               content: answerBlock.markdown_block.answer
+//             });
+//           }
+//         }
+//       }
+//     }
 
-    if (typeof res !== 'undefined') {
-      res.json(messages);
-    } else {
-      return messages;
-    }
+//     console.log(JSON.stringify(messages, null, 2));
 
-  } catch (error) {
-    console.error('Error fetching/parsing Perplexity data:', error.message);
-    if (typeof res !== 'undefined') {
-      res.status(500).send('Error fetching data');
-    }
-  }
-}
+//     if (typeof res !== 'undefined') {
+//       res.json(messages);
+//     } else {
+//       return messages;
+//     }
+
+//   } catch (error) {
+//     console.error('Error fetching/parsing Perplexity data:', error.message);
+//     if (typeof res !== 'undefined') {
+//       res.status(500).send('Error fetching data');
+//     }
+//   }
+// }
 
 
 
@@ -244,7 +247,7 @@ const invokeGrok = async (url) => {
     const pathParts = url.pathname.split('/').filter(Boolean);
     const uuid = pathParts[pathParts.length - 1];
 
-    if (!uuid) throw new Error("Invalid Grok share URL");
+    if (!uuid) throw new Error("Invalid Grok URL");
 
     const apiUrl = `https://grok.com/rest/app-chat/share_links/${uuid}`;
 
@@ -291,5 +294,5 @@ module.exports = {
 };
 
 // Test
-performParsing({ title: "My Test Data" });
+// performParsing({ title: "My Test Data" });
 
