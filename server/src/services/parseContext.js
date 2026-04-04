@@ -109,7 +109,7 @@ const invokeChatGPT = async (url) => {
         uniqueMessages.push(msg);
       }
     }
-    console.log(JSON.stringify(uniqueMessages, null, 2));
+    // console.log(JSON.stringify(uniqueMessages, null, 2));
 
     if (typeof res !== 'undefined') {
       res.json(uniqueMessages);
@@ -162,7 +162,7 @@ const invokeClaude = async (url) => {
       }
     }
 
-    console.log(JSON.stringify(messages, null, 2));
+    // console.log(JSON.stringify(messages, null, 2));
 
     if (typeof res !== 'undefined') {
       res.json(messages);
@@ -180,7 +180,7 @@ const invokeClaude = async (url) => {
 
 //gemini not supported yet
 const invokeGemini = async (url) => {
-  console.log('gemini')
+  // console.log('gemini')
 }
 
 //pplxty hitting cf - cant be bypassed
@@ -273,7 +273,7 @@ const invokeGrok = async (url) => {
       }
     }
 
-    console.log('Parsed Grok conversation:', JSON.stringify(messages, null, 2));
+    // console.log('Parsed Grok conversation:', JSON.stringify(messages, null, 2));
 
     if (typeof res !== 'undefined') {
       res.json(messages);
