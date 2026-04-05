@@ -34,11 +34,11 @@ import axios from "axios";
 
 function validateURL(value) {
   if (!value.trim()) {
-    return "URL is required";
+    return "We need a URL to get started!";
   }
   const urlRegex = /^(https?:\/\/)?(www\.)?(chatgpt\.com|claude\.ai|grok\.com)\//i;
   if (!urlRegex.test(value)) {
-    return "Please enter a valid chat URL";
+    return "Hmm, that doesn't look like a supported shared chat link.";
   }
   return;
 }
@@ -58,7 +58,7 @@ const handleDelete = async (setOpen) => {
   const value = localStorage.getItem("r-chatUrls");
 
   if (!value) {
-    return toast('No chat history present in the system', { position: "top-center" });
+    return toast("Nothing to delete! No past chats were found.", { position: "top-center" });
   }
 
   let ids = [];
@@ -69,18 +69,18 @@ const handleDelete = async (setOpen) => {
   }
 
   if (ids.length === 0) {
-    return toast('No chat history present in the system', { position: "top-center" });
+    return toast("Nothing to delete! No past chats were found.", { position: "top-center" });
   }
 
   try {
     await axios.delete('http://localhost:5000/api/purge', { data: { ids } });
 
     localStorage.removeItem("r-chatUrls");
-    toast("Success! All chats purged.", { position: "top-center" });
+    toast("All clear! Your chat history has been permanently wiped.", { position: "top-center" });
     setOpen(false)
   } catch (error) {
     console.error(error);
-    toast("Failed to purge", { position: "top-center" });
+    toast("Uh oh, we couldn't delete your history right now. Try again?", { position: "top-center" });
   }
 }
 
@@ -176,7 +176,7 @@ export default function BgCard({
 
     try {
       const response = await axios.post('http://localhost:5000/api/serialize', formData);
-      toast("Success", { position: "top-center" });
+      toast("Success! Click a model below to resume.", { position: "top-center" });
       onSubmit?.(url.trim());
 
       const newId = response.data?.id;
@@ -199,7 +199,7 @@ export default function BgCard({
       }
     } catch (error) {
       console.error(error);
-      toast("Failed", { position: "top-center" });
+      toast("Whoops! We hit a snag parsing that chat. Is the link public?", { position: "top-center" });
     } finally {
       setSpinning(false);
     }
@@ -242,15 +242,17 @@ export default function BgCard({
               // disabled={!url.trim()}
               onClick={() => setDeleteOpen(true)}
               size="icon"
+              title="Delete all"
               type="button">
               <>
                 <Trash2 />
               </>
             </Button>
             <Button
-              className="h-9 w-9 cursor-pointer bg-[#322f2f] touch-manipulation rounded-none shrink-0"
+              className="h-9 w-9 cursor-pointer bg-[#961223] touch-manipulation rounded-none shrink-0"
               size="icon"
               type="button"
+              title="Refresh session"
               onClick={() => {
                 localStorage.setItem('r-currentSession', JSON.stringify(''));
                 setId('');
@@ -264,7 +266,7 @@ export default function BgCard({
           </div>
           <div className="-mt-4">
             <p className="text-black text-[11px] mb-6">By clicking Submit, you agree to our <a className="underline cursor-pointer" onClick={() => setTosOpen(true)}>Privacy & Terms</a>
-              <TOSDialog open={tosOpen} setOpen={setTosOpen} />.{id && <>&nbsp;&nbsp; Current session: {id}</>}</p>
+              <TOSDialog open={tosOpen} setOpen={setTosOpen} />.{id && <>&nbsp; Current session: #{id}</>}</p>
             <hr className="border-t border-gray-600 -mx-6" />
           </div>
           <p className="-my-1 mx-1 pl-36">Works with any LLM's itw.</p>
@@ -323,7 +325,7 @@ export default function BgCard({
               onClick={() => {
                 const prompt = `Hi! Can you please read my past chat context [here](https://lmfiles.com/f/${id}) and resume this conversation?`;
                 navigator.clipboard.writeText(prompt);
-                toast("Copied, Paste it in any other LLM's", { position: "top-center" });
+                toast("Prompt copied to clipboard! Paste it wherever you like.", { position: "top-center" });
               }}
             >
               <img src={copyIcon} alt="Copy" className="size-7" />
