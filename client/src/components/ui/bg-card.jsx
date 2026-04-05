@@ -73,7 +73,7 @@ const handleDelete = async (setOpen) => {
   }
 
   try {
-    await axios.delete('http://localhost:5000/api/purge', { data: { ids } });
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/purge`, { data: { ids } });
 
     localStorage.removeItem("r-chatUrls");
     toast("All clear! Your chat history has been permanently wiped.", { position: "top-center" });
@@ -175,7 +175,7 @@ export default function BgCard({
     let formData = { url: url.trim() };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/serialize', formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/serialize`, formData);
       toast("Success! Click a model below to resume.", { position: "top-center" });
       onSubmit?.(url.trim());
 
