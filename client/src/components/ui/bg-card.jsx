@@ -212,17 +212,17 @@ export default function BgCard({
   const generalError = errors?.general;
 
   return (
-    <Card className={cn("w-full max-w-2xl shadow-xs font-jetbrains rounded-none", className)}>
+    <Card className={cn("w-full max-w-2xl shadow-xs font-jetbrains rounded-none max-md:max-w-full", className)}>
       <CardContent>
         <form className="flex flex-col gap-6 -mt-3" onSubmit={handleSubmit}>
 
           {generalError && <ErrorAlert message={generalError} />}
 
           <div className="flex flex-col gap-0">
-            <p className="font-surgena pl-52 text-8xl text-[#961223] flex items-start">R<svg className={`w-[34px] h-[34px] inline-block mt-2 ${spinning ? 'animate-spin' : ''}`} viewBox="-0.054 0 4.272 4.272" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.432 3.576L0 2.832L1.476 2.148L0 1.452L0.432 0.695999L1.764 1.632L1.632 0H2.496L2.352 1.62L3.696 0.684L4.128 1.44L2.664 2.112L4.164 2.82L3.732 3.576L2.376 2.616L2.508 4.272H1.644L1.788 2.64L0.432 3.576Z" fill="#961223" /></svg></p>
+            <p className="font-surgena pl-52 text-8xl text-[#961223] flex items-start max-md:pl-0 max-md:justify-center max-md:text-6xl max-sm:text-7xl">R<svg className={`w-[34px] h-[34px] inline-block mt-2 max-md:w-[24px] max-md:h-[24px] max-sm:w-[30px] max-sm:h-[30px] ${spinning ? 'animate-spin' : ''}`} viewBox="-0.054 0 4.272 4.272" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.432 3.576L0 2.832L1.476 2.148L0 1.452L0.432 0.695999L1.764 1.632L1.632 0H2.496L2.352 1.62L3.696 0.684L4.128 1.44L2.664 2.112L4.164 2.82L3.732 3.576L2.376 2.616L2.508 4.272H1.644L1.788 2.64L0.432 3.576Z" fill="#961223" /></svg></p>
           </div>
 
-          <div className="flex items-end gap-3">
+          <div className="flex items-end gap-3 max-sm:flex-wrap max-sm:justify-items-start">
             <URLField
               onChange={handleUrlChange}
               value={url} />
@@ -269,8 +269,8 @@ export default function BgCard({
               <TOSDialog open={tosOpen} setOpen={setTosOpen} />.{id && <>&nbsp; Current session: #{id}</>}</p>
             <hr className="border-t border-gray-600 -mx-6" />
           </div>
-          <p className="-my-1 mx-1 pl-36">Works with any LLM's itw.</p>
-          <div className="flex flex-row-auto gap-8">
+          <p className="-my-1 mx-1 pl-36 max-md:pl-0 max-md:text-center max-sm:text-sm">Works with any LLM's itw.</p>
+          <div className="flex flex-row-auto gap-8 max-md:gap-4 max-md:flex-wrap max-md:justify-center max-sm:gap-3">
             <a className={!id ? "pointer-events-none" : ""} href={`https://chatgpt.com/?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
               <Button
                 disabled={!id}

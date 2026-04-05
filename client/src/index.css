@@ -204,6 +204,12 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@media (max-width: 1023px) {
+  .responsive-bg {
+    background-image: none !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
