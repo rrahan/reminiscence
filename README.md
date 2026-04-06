@@ -26,7 +26,7 @@
 
 LLM conversations are trapped inside vendor platforms. When you switch models or want to continue a conversation elsewhere, the context is lost.
 
-**Reminiscence** solves this by acting as a universal context bridge:
+**reminiscence** solves this by acting as a universal context bridge:
 
 1. Paste a shared conversation URL from a supported platform
 2. The server scrapes and parses the conversation into a normalized format
