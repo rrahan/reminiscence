@@ -42,11 +42,11 @@ LLM conversations are trapped inside vendor platforms. When you switch models or
 
 | Platform | Status 
 |----------|--------
-| **ChatGPT** (chatgpt.com) | ⚠️ Partially supported | 
 | **Claude** (claude.ai) | ✅ Supported | 
 | **Grok** (grok.com) | ✅ Supported | 
 | **Scira** (scira.ai) | ✅ Supported |
 | **V0** (v0.dev) | ✅ Supported |
+| **ChatGPT** (chatgpt.com) | ⚠️ Partially supported | 
 | **Gemini** (gemini.google.com) | 🚧 Planned |
 | **Perplexity** (perplexity.ai) | ⛔ Blocked |
 
