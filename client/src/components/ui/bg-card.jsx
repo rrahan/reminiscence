@@ -133,7 +133,7 @@ function TOSDialog({ open, setOpen }) {
         <DialogHeader>
           <DialogTitle>Privacy & Terms</DialogTitle>
           <DialogDescription>
-            We temporarily host your chat on secure third-party servers to make the transfer work, then permanently delete it within an hour. We never track you, sell data, or train AI. Our code is fully <a className="underline text-black" href="https://git.new/reminiscence">open-source</a>, and <span className="text-black">we highly encourage self-hosting for total control.</span>
+            We temporarily host your chat on secure third-party servers to make the transfer work, then permanently delete it within an hour. We never track you, sell data, or train AI. Our code is fully <a className="underline text-black" href="https://git.new/remin">open-source</a>, and <span className="text-black">we highly encourage self-hosting for total control.</span>
             <br /> <br />
             Because this public instance is a free tool, it is provided "as is" without guarantees. Please do not transfer illegal or sensitive personal data.
           </DialogDescription>

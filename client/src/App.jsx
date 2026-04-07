@@ -12,7 +12,7 @@ function App() {
 
       <div className="relative flex bg-[#961223] min-h-screen bg-cover bg-center bg-no-repeat max-lg:flex-col max-lg:items-center max-lg:overflow-x-hidden responsive-bg" style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: '115% auto', backgroundPosition: '55% 100%', }}>
         <span className='absolute top-0 left-0 font-surgena cursor-pointer pl-2 pt-2 text-white text-9xl max-md:text-6xl max-sm:text-8xl z-10'>*</span>
-        <span className='absolute top-0 right-0 font-jetbrains cursor-pointer pr-4 pt-3 text-white text-xl max-md:text-base max-sm:text-sm z-10'>[<a className='text-xl max-md:text-base max-sm:text-sm underline' href="https://git.new/reminiscence">GitHub</a>]</span>
+        <span className='absolute top-0 right-0 font-jetbrains cursor-pointer pr-4 pt-3 text-white text-xl max-md:text-base max-sm:text-sm z-10'>[<a className='text-xl max-md:text-base max-sm:text-sm underline' href="https://git.new/remin">GitHub</a>]</span>
         <div className="h-screen flex items-center justify-center max-lg:hidden">
         </div>
         <div className="w-1/2 flex items-end justify-center pb-8 max-lg:w-full max-lg:items-center max-lg:justify-center max-lg:pt-24 max-lg:pb-12 max-lg:px-4">
