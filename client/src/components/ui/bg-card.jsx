@@ -269,7 +269,7 @@ export default function BgCard({
               <TOSDialog open={tosOpen} setOpen={setTosOpen} />.{id && <>&nbsp; Current session: #{id}</>}</p>
             <hr className="border-t border-gray-600 -mx-6" />
           </div>
-          <p className="-my-1 mx-1 pl-36 max-md:pl-0 max-md:text-center max-sm:text-sm">Compatible with all leading LLMs.</p>
+          <p className="-my-1 mx-1 pl-24 max-md:pl-0 max-md:text-center max-sm:text-sm">Compatible with all leading LLMs.</p>
           <div className="flex flex-row-auto gap-8 max-md:gap-4 max-md:flex-wrap max-md:justify-center max-sm:gap-3">
             <a className={!id ? "pointer-events-none" : ""} href={`https://chatgpt.com/?q=Hi!%20Can%20you%20please%20read%20my%20past%20chat%20context%5Bhere%5D(https%3A%2F%2Flmfiles.com%2Ff%2F${id})%20and%20resume%20this%20conversation%3F`} target="_blank" rel="noopener noreferrer">
               <Button
